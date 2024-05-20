@@ -78,6 +78,7 @@ type fileScanner struct {
 	showInVT          bool
 	waitForCompletion bool
 	password          string
+	checkBeforeScan   bool
 }
 
 func (s *fileScanner) Do(path interface{}, ds *utils.DoerState) string {
@@ -100,6 +101,25 @@ func (s *fileScanner) Do(path interface{}, ds *utils.DoerState) string {
 		return err.Error()
 	}
 	defer f.Close()
+
+	if s.checkBeforeScan {
+		fileInfo, err := f.Stat()
+		if err != nil {
+			return err.Error()
+		}
+		fileSize := fileInfo.Size()
+		hash, err := utils.GetFileHash(f, fileSize)
+		if err != nil {
+			return err.Error()
+		}
+		analysis, err := s.cli.GetObject(vt.URL("files/%s", hash))
+		if err == nil {
+			// If file is found, print the existing analysis result and return.
+			s.printer.PrintObject(analysis)
+			return ""
+		}
+		// If file is not found, proceed with the scan.
+	}
 
 	var analysis *vt.Object
 	if s.password != "" {
@@ -181,6 +201,7 @@ func NewScanFileCmd() *cobra.Command {
 				showInVT:          viper.GetBool("open"),
 				waitForCompletion: viper.GetBool("wait"),
 				password:          viper.GetString("password"),
+				checkBeforeScan:   viper.GetBool("check-before-scan"),
 				printer:           p,
 				cli:               client}
 			c.DoWithStringsFromReader(s, argReader)
@@ -193,6 +214,7 @@ func NewScanFileCmd() *cobra.Command {
 	addPasswordFlag(cmd.Flags())
 	addWaitForCompletionFlag(cmd.Flags())
 	addIncludeExcludeFlags(cmd.Flags())
+	cmd.Flags().Bool("check-before-scan", false, "Check if the file is already scanned before scanning")
 	cmd.MarkZshCompPositionalArgumentFile(1)
 
 	return cmd

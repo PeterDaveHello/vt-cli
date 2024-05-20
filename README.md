@@ -375,3 +375,13 @@ $ vt url http://www.virustotal.com --include=_id,_type,**.result
 ```
 
 The `--exclude` option works similarly to `--include` but instead of including the matching fields in the output, it includes everything except the matching fields. You can use this option when you want to keep most of the fields, but leave out a few of them that are not interesting. If you use `--include` and `--exclude` simultaneously `--include` enters in action first, including only the fields that match the `--include` patterns, while `--exclude` comes in after that, removing any remaining field that matches the `--exclude` patterns.
+
+### Scan a file and check if it's already scanned
+
+To scan a file and check if it's already scanned before initiating a new scan, you can use the `--check-before-scan` flag with the `vt scan file` command. This feature allows you to save time and resources by avoiding unnecessary scans of files that have already been analyzed by VirusTotal.
+
+```sh
+$ vt scan file <yourfile> --check-before-scan
+```
+
+If the file has already been scanned, the CLI will output the existing analysis result without scanning the file again. If the file has not been scanned before, it will be uploaded for analysis, and the CLI will return the analysis ID as usual.
