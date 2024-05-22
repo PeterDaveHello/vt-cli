@@ -16,6 +16,8 @@ input, one per line.
 
 The command can also receive a directory to scan all files contained on it.
 
+The `--check-before-scan` flag allows checking if the file is already known by VirusTotal before uploading it for scanning.
+
 ```
 vt scan file [[dir] | [file]...] [flags]
 ```
@@ -32,9 +34,10 @@ vt scan file [[dir] | [file]...] [flags]
 ### Options
 
 ```
-  -h, --help          help for file
-  -o, --open          Return an URL to see the analysis report at the VirusTotal web GUI
-  -t, --threads int   number of threads working in parallel (default 5)
+  -c, --check-before-scan   Check if the file is already known by VirusTotal before uploading it for scanning.
+  -h, --help                help for file
+  -o, --open                Return an URL to see the analysis report at the VirusTotal web GUI
+  -t, --threads int         number of threads working in parallel (default 5)
 ```
 
 ### Options inherited from parent commands
@@ -48,4 +51,3 @@ vt scan file [[dir] | [file]...] [flags]
 ### SEE ALSO
 
 * [vt scan](vt_scan.md)	 - Scan files or URLs
-

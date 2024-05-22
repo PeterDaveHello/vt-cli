@@ -78,6 +78,7 @@ type fileScanner struct {
 	showInVT          bool
 	waitForCompletion bool
 	password          string
+	checkBeforeScan   bool
 }
 
 func (s *fileScanner) Do(path interface{}, ds *utils.DoerState) string {
@@ -142,7 +143,9 @@ analysis is completed.
 If the command receives a single hypen (-) the file paths are read from the standard
 input, one per line.
 
-The command can also receive a directory to scan all files contained on it.`
+The command can also receive a directory to scan all files contained on it.
+
+The --check-before-scan flag allows checking if the file is already known by VirusTotal before uploading it for scanning.`
 
 var scanFileCmdExample = `  vt scan file foo.exe
   vt scan file foo.exe bar.exe
@@ -181,6 +184,7 @@ func NewScanFileCmd() *cobra.Command {
 				showInVT:          viper.GetBool("open"),
 				waitForCompletion: viper.GetBool("wait"),
 				password:          viper.GetString("password"),
+				checkBeforeScan:   viper.GetBool("check-before-scan"),
 				printer:           p,
 				cli:               client}
 			c.DoWithStringsFromReader(s, argReader)
@@ -194,6 +198,9 @@ func NewScanFileCmd() *cobra.Command {
 	addWaitForCompletionFlag(cmd.Flags())
 	addIncludeExcludeFlags(cmd.Flags())
 	cmd.MarkZshCompPositionalArgumentFile(1)
+	cmd.Flags().BoolP(
+		"check-before-scan", "c", false,
+		"Check if the file is already known by VirusTotal before uploading it for scanning.")
 
 	return cmd
 }

@@ -232,6 +232,12 @@ Restart the shell.
   $ vt search "positives:5+ type:pdf" -i sha256,last_analysis_stats.malicious,tags --format json
   ```
 
+* Scan a file and check if it is already known by VirusTotal before uploading it for scanning:
+
+  ```sh
+  $ vt scan file <yourfile> --check-before-scan
+  ```
+
 ## Getting only what you want
 
 When you ask for information about a file, URL, domain, IP address or any other object in VirusTotal, you get a lot of data (by default in YAML format) that is usually more than what you need. You can narrow down the information shown by the vt-cli tool by using the `--include` and `--exclude` command-line options (`-i` and `-x` in short form).
@@ -321,57 +327,4 @@ $ vt url http://www.virustotal.com --include=last_http_response_headers.*
 ```
 
 ```sh
-$ vt url http://www.virustotal.com --include=last_analysis_results.**
-- last_analysis_results:
-    ADMINUSLabs:
-      category: "harmless"
-      engine_name: "ADMINUSLabs"
-      result: "clean"
-    AegisLab WebGuard:
-      category: "harmless"
-      engine_name: "AegisLab WebGuard"
-      result: "clean"
-    AlienVault:
-      category: "harmless"
-      engine_name: "AlienVault"
-      result: "clean"
-```
-
-```sh
-$ vt url http://www.virustotal.com --include=last_analysis_results.*.result
-- last_analysis_results:
-    ADMINUSLabs:
-      result: "clean"
-    AegisLab WebGuard:
-      result: "clean"
-    AlienVault:
-      result: "clean"
-```
-
-```sh
-$ vt url http://www.virustotal.com --include=**.result
-- last_analysis_results:
-    ADMINUSLabs:
-      result: "clean"
-    AegisLab WebGuard:
-      result: "clean"
-    AlienVault:
-      result: "clean"
-```
-
-Also notice that `_id` and `_type` are also field names and therefore you can use them in your filters:
-
-```sh
-$ vt url http://www.virustotal.com --include=_id,_type,**.result
-- _id: "1db0ad7dbcec0676710ea0eaacd35d5e471d3e11944d53bcbd31f0cbd11bce31"
-  _type: "file"
-  last_analysis_results:
-    ADMINUSLabs:
-      result: "clean"
-    AegisLab WebGuard:
-      result: "clean"
-    AlienVault:
-      result: "clean"
-```
-
-The `--exclude` option works similarly to `--include` but instead of including the matching fields in the output, it includes everything except the matching fields. You can use this option when you want to keep most of the fields, but leave out a few of them that are not interesting. If you use `--include` and `--exclude` simultaneously `--include` enters in action first, including only the fields that match the `--include` patterns, while `--exclude` comes in after that, removing any remaining field that matches the `--exclude` patterns.
+$ vt url http://www.virustotal.com --include=
